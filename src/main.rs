@@ -13,26 +13,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   let word = "korrectud".to_string();
   println!("{:?}", corrector.correct(&word));
 
-  // print!("Type one word: ");
-  // loop {
-  //   let request: String = text_io::read!("{}\n");
-  //   match corrector.correct(&request) {
-  //     Some(correct) => println!("Did you mean: {correct}?"),
-  //     None => println!("No correction available"),
-  //   }
-  //   print!("Type one word: ");
-  // }
-  Ok(())
+  print!("Type one word: ");
+  loop {
+    let request: String = text_io::read!("{}\n");
+    match corrector.correct(&request) {
+      Some(correct) => println!("Did you mean: {correct}?"),
+      None => println!("No correction available"),
+    }
+    print!("Type one word: ");
+  }
 }
 
 #[cfg(test)]
 mod tests {
-  use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
-
   use super::*;
   use std::fs::File;
   use std::io::{self, BufRead, BufReader};
-  use std::sync::atomic::{AtomicI64, Ordering};
   use std::time::Instant;
 
   fn load_test_set<F: AsRef<str>>(filename: F) -> io::Result<Vec<(String, Vec<String>)>> {
@@ -60,29 +56,27 @@ mod tests {
     corrector.load(big).unwrap();
 
     let test_set = load_test_set(test_set).unwrap();
-    let good = AtomicI64::new(0);
-    let n = AtomicI64::new(0);
+    let mut good = 0f64;
+    let mut n = 0f64;
     let start = Instant::now();
 
-    test_set.par_iter().for_each(|(expected, words)| {
-      // for (expected, words) in test_set {
+    for (expected, words) in test_set {
       for word in words {
-        let w = corrector.correct(word).unwrap_or("\"nothing\"".to_string());
-        if w == *expected {
-          good.fetch_add(1, Ordering::Relaxed);
+        let w = corrector.correct(&word).unwrap_or("\"nothing\"".to_string());
+        if w == expected {
+          good += 1.0;
         }
-        n.fetch_add(1, Ordering::Relaxed);
+        n += 1.0;
         println!("correct({}) => {}; expected {}", word, w, expected,);
       }
-    });
+    };
 
     let elapsed = start.elapsed();
-    let good = good.load(Ordering::Relaxed) as f64;
-    let n = n.load(Ordering::Relaxed) as f64;
     println!(
-      "{:.2}% of {:.0} correct at {:.3} words per second",
+      "{:.2}% of {:.0} correct in {:.3}s at {:.3} words per second",
       (good / n) * 100.0,
       n,
+      elapsed.as_secs_f64(),
       (n / elapsed.as_secs_f64()),
     );
   }

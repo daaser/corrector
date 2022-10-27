@@ -6,14 +6,14 @@ pub fn sort_by_second(left: &(&String, &usize), right: &(&String, &usize)) -> Or
   left.1.cmp(right.1)
 }
 
-pub fn map_deletes<'a>(op: &'a (&'a str, &'a str)) -> Option<String> {
+pub fn map_deletes(op: &(&str, &str)) -> Option<String> {
   match op.1.len() {
     x if x != 0 => Some(format!("{}{}", &op.0, &op.1[1..])),
     _ => None,
   }
 }
 
-pub fn map_transposes<'a>(op: &'a (&'a str, &'a str)) -> Option<String> {
+pub fn map_transposes(op: &(&str, &str)) -> Option<String> {
   match op.1.len() {
     x if x > 1 => Some(format!(
       "{}{}{}{}",
