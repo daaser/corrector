@@ -1,6 +1,6 @@
 mod utils;
 
-use std::collections::HashMap;
+use std::collections::{HashMap};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
@@ -82,7 +82,6 @@ fn edits(&self, word: &String, results: &mut Vec<String>) {
   results.par_extend(splits.par_iter().filter_map(map_transposes));
   results.par_extend(splits.par_iter().flat_map(map_replaces));
   results.par_extend(splits.par_iter().flat_map(map_inserts));
-  println!("{results:?}");
 }
 
 fn known(&self, results: &Vec<String>, candidates: &mut Dictionary) {

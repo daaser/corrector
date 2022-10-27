@@ -4,15 +4,10 @@ use corrector::Corrector;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut corrector = Corrector::new();
-  let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+  let manifest_dir = env::var("CARGO_MANIFEST_DIR")?;
   let big = manifest_dir + "/big.txt";
   let filepath = env::args().nth(1).unwrap_or(big);
   corrector.load(filepath)?;
-
-  let word = "speling".to_string();
-  println!("{:?}", corrector.correct(&word));
-  let word = "korrectud".to_string();
-  println!("{:?}", corrector.correct(&word));
 
   print!("Type one word: ");
   loop {
@@ -46,6 +41,24 @@ mod tests {
     }
 
     Ok(ret)
+  }
+
+  #[test]
+  fn unit() {
+    let mut corrector = Corrector::new();
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+    let big = manifest_dir + "/big.txt";
+    corrector.load(big).unwrap();
+
+    let start = Instant::now();
+    let word = "speling".to_string();
+    assert_eq!("spelling", corrector.correct(&word).unwrap());
+    println!("correct({}) took {:.3}", word, start.elapsed().as_secs_f64());
+
+    let start = Instant::now();
+    let word = "korrectud".to_string();
+    assert_eq!("corrected", corrector.correct(&word).unwrap());
+    println!("correct({}) took {:.3}", word, start.elapsed().as_secs_f64());
   }
 
   #[test]

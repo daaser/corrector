@@ -8,20 +8,26 @@ pub fn sort_by_second(left: &(&String, &usize), right: &(&String, &usize)) -> Or
 
 pub fn map_deletes(op: &(&str, &str)) -> Option<String> {
   match op.1.len() {
-    x if x != 0 => Some(format!("{}{}", &op.0, &op.1[1..])),
+    x if x != 0 => {
+      let mut st = String::with_capacity(op.0.len() + op.1.len());
+      st.push_str(op.0);
+      st.push_str(&op.1[1..]);
+      Some(st)
+    }
     _ => None,
   }
 }
 
 pub fn map_transposes(op: &(&str, &str)) -> Option<String> {
   match op.1.len() {
-    x if x > 1 => Some(format!(
-      "{}{}{}{}",
-      &op.0,
-      &op.1[1..=1],
-      &op.1[0..=0],
-      &op.1[2..]
-    )),
+    x if x > 1 => {
+      let mut st = String::with_capacity(op.0.len() + op.1.len());
+      st.push_str(op.0);
+      st.push_str(&op.1[1..=1]);
+      st.push_str(&op.1[0..=0]);
+      st.push_str(&op.1[2..]);
+      Some(st)
+    }
     _ => None,
   }
 }
@@ -32,7 +38,13 @@ pub fn map_replaces<'a>(
   ('a'..='z')
     .into_par_iter()
     .filter_map(move |i| match op.1.len() {
-      x if x != 0 => Some(format!("{}{}{}", &op.0, i, &op.1[1..])),
+      x if x != 0 => {
+        let mut st = String::with_capacity(op.0.len() + op.1.len());
+        st.push_str(op.0);
+        st.push(i);
+        st.push_str(&op.1[1..]);
+        Some(st)
+      }
       _ => None,
     })
 }
@@ -43,7 +55,13 @@ pub fn map_inserts<'a>(
   ('a'..='z')
     .into_par_iter()
     .filter_map(move |i| match op.1.len() {
-      x if x != 0 => Some(format!("{}{}{}", &op.0, i, &op.1)),
+      x if x != 0 => {
+        let mut st = String::with_capacity(1 + op.0.len() + op.1.len());
+        st.push_str(op.0);
+        st.push(i);
+        st.push_str(op.1);
+        Some(st)
+      }
       _ => None,
     })
 }

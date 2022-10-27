@@ -1,8 +1,14 @@
+use std::env;
+
 use corrector::Corrector;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn criterion_benchmark(c: &mut Criterion) {
-  let crtr = Corrector::new();
+  let mut crtr = Corrector::new();
+  let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+  let big = manifest_dir + "/big.txt";
+  crtr.load(big).unwrap();
+
   let long_word = "korrectud".to_string();
   c.bench_function("correct", |b| {
     b.iter(|| crtr.correct(black_box(&long_word)))
