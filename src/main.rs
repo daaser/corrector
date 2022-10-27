@@ -4,8 +4,9 @@ use corrector::Corrector;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut corrector = Corrector::new();
-  let fallback = "/usr/share/dict/words".to_string();
-  let filepath = env::args().nth(1).unwrap_or(fallback);
+  let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+  let big = manifest_dir + "/big.txt";
+  let filepath = env::args().nth(1).unwrap_or(big);
   corrector.load(filepath)?;
 
   let word = "speling".to_string();
@@ -62,14 +63,16 @@ mod tests {
 
     for (expected, words) in test_set {
       for word in words {
-        let w = corrector.correct(&word).unwrap_or("\"nothing\"".to_string());
+        let w = corrector
+          .correct(&word)
+          .unwrap_or("\"nothing\"".to_string());
         if w == expected {
           good += 1.0;
         }
         n += 1.0;
         println!("correct({}) => {}; expected {}", word, w, expected,);
       }
-    };
+    }
 
     let elapsed = start.elapsed();
     println!(

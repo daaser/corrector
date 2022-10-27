@@ -50,7 +50,7 @@ pub fn correct(&self, word: &String) -> Option<String> {
   self.known(&results, &mut candidates);
 
   if !candidates.is_empty() {
-    return match candidates.iter().max_by(sort_by_second) {
+    return match candidates.par_iter().max_by(sort_by_second) {
       Some((key, _)) => Some(key.clone()),
       _ => None,
     };
@@ -63,7 +63,7 @@ pub fn correct(&self, word: &String) -> Option<String> {
   }
 
   if !candidates.is_empty() {
-    return match candidates.iter().max_by(sort_by_second) {
+    return match candidates.par_iter().max_by(sort_by_second) {
       Some((key, _)) => Some(key.clone()),
       _ => None,
     };
@@ -82,6 +82,7 @@ fn edits(&self, word: &String, results: &mut Vec<String>) {
   results.par_extend(splits.par_iter().filter_map(map_transposes));
   results.par_extend(splits.par_iter().flat_map(map_replaces));
   results.par_extend(splits.par_iter().flat_map(map_inserts));
+  println!("{results:?}");
 }
 
 fn known(&self, results: &Vec<String>, candidates: &mut Dictionary) {
