@@ -54,12 +54,20 @@ mod tests {
     let start = Instant::now();
     let word = "speling".to_string();
     assert_eq!("spelling", corrector.correct(&word).unwrap());
-    println!("correct({}) took {:.3}", word, start.elapsed().as_secs_f64());
+    println!(
+      "correct({}) took {:.3}",
+      word,
+      start.elapsed().as_secs_f64()
+    );
 
     let start = Instant::now();
     let word = "korrectud".to_string();
     assert_eq!("corrected", corrector.correct(&word).unwrap());
-    println!("correct({}) took {:.3}", word, start.elapsed().as_secs_f64());
+    println!(
+      "correct({}) took {:.3}",
+      word,
+      start.elapsed().as_secs_f64()
+    );
   }
 
   #[test]
