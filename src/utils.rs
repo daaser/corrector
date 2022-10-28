@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
-
-use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+use std::time::Instant;
 
 pub fn sort_by_second(left: &(&String, &usize), right: &(&String, &usize)) -> Ordering {
   left.1.cmp(right.1)
@@ -34,9 +33,9 @@ pub fn map_transposes(op: &(&str, &str)) -> Option<String> {
 
 pub fn map_replaces<'a>(
   op: &'a (&'a str, &'a str),
-) -> impl IntoParallelIterator<Item = String> + Sync + Send + 'a {
+) -> impl IntoIterator<Item = String> + Sync + Send + 'a {
   ('a'..='z')
-    .into_par_iter()
+    .into_iter()
     .filter_map(move |i| match op.1.len() {
       x if x != 0 => {
         let mut st = String::with_capacity(op.0.len() + op.1.len());
@@ -51,9 +50,9 @@ pub fn map_replaces<'a>(
 
 pub fn map_inserts<'a>(
   op: &'a (&'a str, &'a str),
-) -> impl IntoParallelIterator<Item = String> + Sync + Send + 'a {
+) -> impl IntoIterator<Item = String> + Sync + Send + 'a {
   ('a'..='z')
-    .into_par_iter()
+    .into_iter()
     .filter_map(move |i| match op.1.len() {
       x if x != 0 => {
         let mut st = String::with_capacity(1 + op.0.len() + op.1.len());
@@ -64,4 +63,12 @@ pub fn map_inserts<'a>(
       }
       _ => None,
     })
+}
+
+fn _timeit<F: FnMut() -> T, T>(mut f: F) -> T {
+  let start = Instant::now();
+  let result = f();
+  let end = start.elapsed();
+  println!("it took {} seconds", end.as_secs_f64());
+  result
 }

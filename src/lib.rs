@@ -39,7 +39,7 @@ pub fn load<F: AsRef<str>>(&mut self, filename: F) -> io::Result<()> {
 }
 
 pub fn correct(&self, word: &String) -> Option<String> {
-  let mut results = Vec::new();
+  let mut results = Vec::with_capacity(1024);
   let mut candidates = Dictionary::new();
 
   if self.dictionary.contains_key(word) {
@@ -57,7 +57,7 @@ pub fn correct(&self, word: &String) -> Option<String> {
   }
 
   for result in results {
-    let mut sub_result = Vec::new();
+    let mut sub_result = Vec::with_capacity(512);
     self.edits(&result, &mut sub_result);
     self.known(&sub_result, &mut candidates);
   }
@@ -78,10 +78,10 @@ fn edits(&self, word: &String, results: &mut Vec<String>) {
     .map(|i| (&word[0..i], &word[i..]))
     .collect::<Vec<_>>();
 
-  results.par_extend(splits.par_iter().filter_map(map_deletes));
-  results.par_extend(splits.par_iter().filter_map(map_transposes));
-  results.par_extend(splits.par_iter().flat_map(map_replaces));
-  results.par_extend(splits.par_iter().flat_map(map_inserts));
+  results.extend(splits.iter().filter_map(map_deletes));
+  results.extend(splits.iter().filter_map(map_transposes));
+  results.extend(splits.iter().flat_map(map_replaces));
+  results.extend(splits.iter().flat_map(map_inserts));
 }
 
 fn known(&self, results: &Vec<String>, candidates: &mut Dictionary) {
