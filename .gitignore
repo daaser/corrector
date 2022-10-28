@@ -38,3 +38,4 @@ target/
 .vscode/
 .idea/
 tmp/
+__pycache__/
