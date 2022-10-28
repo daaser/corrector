@@ -4,9 +4,10 @@ use corrector::Corrector;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut corrector = Corrector::new();
-  let manifest_dir = env::var("CARGO_MANIFEST_DIR")?;
-  let big = manifest_dir + "/big.txt";
-  let filepath = env::args().nth(1).unwrap_or(big);
+  let filepath = env::args().nth(1).unwrap_or_else(|| {
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+    manifest_dir + "/big.txt"
+  });
   corrector.load(filepath)?;
 
   print!("Type one word: ");
