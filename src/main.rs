@@ -1,24 +1,41 @@
 use std::env;
+use std::process;
 
 use corrector::Corrector;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut corrector = Corrector::new();
-  let filepath = env::args().nth(1).unwrap_or_else(|| {
-    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-    manifest_dir + "/big.txt"
+  let filepath = get_big().unwrap_or_else(|| {
+    eprintln!("unable to locate \"big.txt\"");
+    process::exit(1);
   });
   corrector.load(filepath)?;
 
   print!("Type one word: ");
   loop {
     let request: String = text_io::read!("{}\n");
-    match corrector.correct(&request) {
+    corrector::utils::_timeit(|| match corrector.correct(&request) {
       Some(correct) => println!("Did you mean: {correct}?"),
       None => println!("No correction available"),
-    }
+    });
     print!("Type one word: ");
   }
+}
+
+fn get_big() -> Option<String> {
+  let args = env::args().collect::<Vec<String>>();
+  let res = args.get(1);
+  if res.is_some() {
+    return res.map(|s| s.into());
+  }
+  let res = env::var("CARGO_MANIFEST_DIR").ok();
+  if res.is_some() {
+    return res.map(|s| s + "/big.txt");
+  }
+  env::current_dir().ok()
+    .map(|mut pb| { pb.push("big.txt"); pb })
+    .map(|pb| pb.into_os_string())
+    .and_then(|s| s.into_string().ok())
 }
 
 #[cfg(test)]

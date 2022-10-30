@@ -1,7 +1,23 @@
 [package]
-name = "corrector"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/daaser/corrector"
+name = "corrector"
+
+[dependencies]
+rayon = "1.5.3"
+text_io = "0.1.12"
+
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
+
+[profile.release]
+panic = "abort"
+opt-level = 3
+rpath = false
+strip = true
+lto = true
+codegen-units = 1
 
 [lib]
 name = "corrector"
@@ -11,19 +27,6 @@ path = "src/lib.rs"
 name = "corrector"
 path = "src/main.rs"
 
-[dependencies]
-rayon = "1.5.3"
-text_io = "0.1.12"
-
-[dev-dependencies]
-criterion = "0.3"
-
 [[bench]]
 name = "benchy"
 harness = false
-
-[profile.release]
-strip = true
-lto = true
-codegen-units = 1
-panic = "abort"

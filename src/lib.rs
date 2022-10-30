@@ -1,4 +1,4 @@
-mod utils;
+pub mod utils;
 
 use std::collections::HashMap;
 use std::fs::File;
@@ -57,9 +57,9 @@ pub fn correct(&self, word: &String) -> Option<String> {
   }
 
   for result in results {
-    let mut sub_result = Vec::with_capacity(512);
-    self.edits(&result, &mut sub_result);
-    self.known(&sub_result, &mut candidates);
+    let mut sub_results = Vec::with_capacity(512);
+    self.edits(&result, &mut sub_results);
+    self.known(&sub_results, &mut candidates);
   }
 
   if !candidates.is_empty() {

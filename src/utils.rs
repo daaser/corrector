@@ -65,10 +65,10 @@ pub fn map_inserts<'a>(
     })
 }
 
-fn _timeit<F: FnMut() -> T, T>(mut f: F) -> T {
+pub fn _timeit<F: FnMut() -> T, T>(mut f: F) -> T {
   let start = Instant::now();
   let result = f();
   let end = start.elapsed();
-  println!("it took {} seconds", end.as_secs_f64());
+  println!("took {}ms", end.as_millis());
   result
 }
