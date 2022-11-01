@@ -14,6 +14,7 @@ pub struct Corrector {
   dictionary: Dictionary,
 }
 
+#[rustfmt::skip]
 impl Corrector {
 
 pub fn new() -> Self {
@@ -95,6 +96,7 @@ fn known(&self, results: &Vec<String>, candidates: &mut Dictionary) {
 
 } // impl Corrector
 
+#[rustfmt::skip]
 impl Default for Corrector {
 
 fn default() -> Self {

@@ -32,6 +32,7 @@ fn get_big() -> Option<String> {
   if res.is_some() {
     return res.map(|s| s + "/big.txt");
   }
+  #[rustfmt::skip]
   env::current_dir().ok()
     .map(|mut pb| { pb.push("big.txt"); pb })
     .map(|pb| pb.into_os_string())
