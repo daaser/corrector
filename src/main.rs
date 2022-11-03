@@ -1,3 +1,4 @@
+#![feature(stmt_expr_attributes)]
 use std::env;
 use std::process;
 
@@ -14,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   print!("Type one word: ");
   loop {
     let request: String = text_io::read!("{}\n");
-    corrector::utils::_timeit(|| match corrector.correct(&request) {
+    corrector::util::_timeit(|| match corrector.correct(&request) {
       Some(correct) => println!("Did you mean: {correct}?"),
       None => println!("No correction available"),
     });
@@ -32,11 +33,12 @@ fn get_big() -> Option<String> {
   if res.is_some() {
     return res.map(|s| s + "/big.txt");
   }
-  #[rustfmt::skip]
-  env::current_dir().ok()
-    .map(|mut pb| { pb.push("big.txt"); pb })
-    .map(|pb| pb.into_os_string())
-    .and_then(|s| s.into_string().ok())
+  let cd = env::current_dir().ok();
+  if let Some(mut c) = cd {
+    c.push("big.txt");
+    return c.into_os_string().into_string().ok();
+  }
+  None
 }
 
 #[cfg(test)]

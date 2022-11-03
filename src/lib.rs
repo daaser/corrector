@@ -1,4 +1,4 @@
-pub mod utils;
+pub mod util;
 
 use std::collections::HashMap;
 use std::fs::File;
@@ -6,7 +6,7 @@ use std::io::{self, BufRead, BufReader};
 
 use rayon::prelude::*;
 
-use crate::utils::*;
+use crate::util::*;
 
 type Dictionary = HashMap<String, usize>;
 
