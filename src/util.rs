@@ -69,6 +69,6 @@ pub fn _timeit<F: FnMut() -> T, T>(mut f: F) -> T {
   let start = Instant::now();
   let result = f();
   let end = start.elapsed();
-  println!("took {}ms", end.as_millis());
+  println!("it took {}ms", end.as_millis());
   result
 }

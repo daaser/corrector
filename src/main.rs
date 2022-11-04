@@ -1,4 +1,3 @@
-#![feature(stmt_expr_attributes)]
 use std::env;
 use std::process;
 
@@ -6,37 +5,38 @@ use corrector::Corrector;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut corrector = Corrector::new();
-  let filepath = get_big().unwrap_or_else(|| {
+  let Some(filepath) = get_big() else {
     eprintln!("unable to locate \"big.txt\"");
     process::exit(1);
-  });
+  };
   corrector.load(filepath)?;
+  let pool = rayon::ThreadPoolBuilder::new().num_threads(10).build()?;
 
   print!("Type one word: ");
   loop {
     let request: String = text_io::read!("{}\n");
-    corrector::util::_timeit(|| match corrector.correct(&request) {
-      Some(correct) => println!("Did you mean: {correct}?"),
-      None => println!("No correction available"),
+    corrector::util::_timeit(|| {
+      pool.install(|| match corrector.correct(&request) {
+        Some(correct) => println!("Did you mean: {correct}?"),
+        None => println!("No correction available"),
+      })
     });
     print!("Type one word: ");
   }
 }
 
 fn get_big() -> Option<String> {
-  let args = env::args().collect::<Vec<String>>();
-  let res = args.get(1);
+  let res = env::args().nth(1);
   if res.is_some() {
-    return res.map(|s| s.into());
+    return res;
   }
   let res = env::var("CARGO_MANIFEST_DIR").ok();
   if res.is_some() {
     return res.map(|s| s + "/big.txt");
   }
-  let cd = env::current_dir().ok();
-  if let Some(mut c) = cd {
-    c.push("big.txt");
-    return c.into_os_string().into_string().ok();
+  if let Some(mut cd) = env::current_dir().ok() {
+    cd.push("big.txt");
+    return cd.into_os_string().into_string().ok();
   }
   None
 }
