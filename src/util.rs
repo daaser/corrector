@@ -6,29 +6,25 @@ pub fn sort_by_second(left: &(&String, &usize), right: &(&String, &usize)) -> Or
 }
 
 pub fn map_deletes(op: &(&str, &str)) -> Option<String> {
-  match op.1.len() {
-    x if x != 0 => {
-      let mut st = String::with_capacity(op.0.len() + op.1.len());
-      st.push_str(op.0);
-      st.push_str(&op.1[1..]);
-      Some(st)
-    }
-    _ => None,
+  if op.1.len() == 0 {
+    return None;
   }
+  let mut st = String::with_capacity(op.0.len() + op.1.len());
+  st.push_str(op.0);
+  st.push_str(&op.1[1..]);
+  Some(st)
 }
 
 pub fn map_transposes(op: &(&str, &str)) -> Option<String> {
-  match op.1.len() {
-    x if x > 1 => {
-      let mut st = String::with_capacity(op.0.len() + op.1.len());
-      st.push_str(op.0);
-      st.push_str(&op.1[1..=1]);
-      st.push_str(&op.1[0..=0]);
-      st.push_str(&op.1[2..]);
-      Some(st)
-    }
-    _ => None,
+  if op.1.len() <= 1 {
+    return None;
   }
+  let mut st = String::with_capacity(op.0.len() + op.1.len());
+  st.push_str(op.0);
+  st.push_str(&op.1[1..=1]);
+  st.push_str(&op.1[0..=0]);
+  st.push_str(&op.1[2..]);
+  Some(st)
 }
 
 pub fn map_replaces<'a>(

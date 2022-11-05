@@ -3,6 +3,13 @@ use std::env;
 use corrector::Corrector;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
+#[cfg(not(target_env = "msvc"))]
+use tikv_jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 fn criterion_benchmark(c: &mut Criterion) {
   let mut crtr = Corrector::new();
   let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();

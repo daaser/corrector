@@ -39,7 +39,8 @@ pub fn load<F: AsRef<str>>(&mut self, filename: F) -> io::Result<()> {
   Ok(())
 }
 
-pub fn correct(&self, word: &String) -> Option<String> {
+pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
+  let word = word.as_ref();
   let mut results = Vec::with_capacity(1024);
   let mut candidates = Dictionary::new();
 
@@ -73,7 +74,7 @@ pub fn correct(&self, word: &String) -> Option<String> {
   None
 }
 
-fn edits(&self, word: &String, results: &mut Vec<String>) {
+fn edits(&self, word: &str, results: &mut Vec<String>) {
   let splits = (0..word.len())
     .into_par_iter()
     .map(|i| (&word[0..i], &word[i..]))
@@ -85,7 +86,7 @@ fn edits(&self, word: &String, results: &mut Vec<String>) {
   results.extend(splits.iter().flat_map(map_inserts));
 }
 
-fn known(&self, results: &Vec<String>, candidates: &mut Dictionary) {
+fn known(&self, results: &[String], candidates: &mut Dictionary) {
   for result in results {
     let value = self.dictionary.get_key_value(result);
     if let Some((key, value)) = value {
