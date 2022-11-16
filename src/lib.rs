@@ -50,10 +50,9 @@ pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
   self.known(&results, &mut candidates);
 
   if !candidates.is_empty() {
-    return match candidates.iter().max_by(sort_by_second) {
-      Some((key, _)) => Some(key.clone()),
-      _ => None,
-    };
+    return candidates.into_iter()
+      .max_by(sort_by_second)
+      .map(|(key, _)| key);
   }
 
   for result in results {
@@ -63,10 +62,9 @@ pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
   }
 
   if !candidates.is_empty() {
-    return match candidates.iter().max_by(sort_by_second) {
-      Some((key, _)) => Some(key.clone()),
-      _ => None,
-    };
+    return candidates.into_iter()
+      .max_by(sort_by_second)
+      .map(|(key, _)| key);
   }
 
   None

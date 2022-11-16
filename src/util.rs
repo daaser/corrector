@@ -1,8 +1,8 @@
 use std::cmp::Ordering;
 use std::time::Instant;
 
-pub fn sort_by_second(left: &(&String, &usize), right: &(&String, &usize)) -> Ordering {
-  left.1.cmp(right.1)
+pub fn sort_by_second(left: &(String, usize), right: &(String, usize)) -> Ordering {
+  left.1.cmp(&right.1)
 }
 
 pub fn map_deletes(op: &(&str, &str)) -> Option<String> {
