@@ -4,8 +4,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
-use rayon::prelude::*;
-
 use crate::util::*;
 
 type Dictionary = HashMap<String, usize>;
@@ -52,7 +50,7 @@ pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
   self.known(&results, &mut candidates);
 
   if !candidates.is_empty() {
-    return match candidates.par_iter().max_by(sort_by_second) {
+    return match candidates.iter().max_by(sort_by_second) {
       Some((key, _)) => Some(key.clone()),
       _ => None,
     };
@@ -65,7 +63,7 @@ pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
   }
 
   if !candidates.is_empty() {
-    return match candidates.par_iter().max_by(sort_by_second) {
+    return match candidates.iter().max_by(sort_by_second) {
       Some((key, _)) => Some(key.clone()),
       _ => None,
     };
@@ -76,7 +74,7 @@ pub fn correct<W: AsRef<str>>(&self, word: W) -> Option<String> {
 
 fn edits(&self, word: &str, results: &mut Vec<String>) {
   let splits = (0..word.len())
-    .into_par_iter()
+    .into_iter()
     .map(|i| (&word[0..i], &word[i..]))
     .collect::<Vec<_>>();
 

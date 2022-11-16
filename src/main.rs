@@ -1,6 +1,8 @@
 use std::env;
 use std::process;
 
+use reqwest::blocking as blocking_request;
+
 use corrector::Corrector;
 
 #[cfg(not(target_env = "msvc"))]
@@ -17,16 +19,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     process::exit(1);
   };
   corrector.load(filepath)?;
-  let pool = rayon::ThreadPoolBuilder::new().num_threads(10).build()?;
 
   print!("Type one word: ");
   loop {
     let request: String = text_io::read!("{}\n");
     corrector::util::_timeit(|| {
-      pool.install(|| match corrector.correct(&request) {
+      match corrector.correct(&request) {
         Some(correct) => println!("Did you mean: {correct}?"),
         None => println!("No correction available"),
-      })
+      }
     });
     print!("Type one word: ");
   }
@@ -44,6 +45,9 @@ fn get_big() -> Option<String> {
   if let Some(mut cd) = env::current_dir().ok() {
     cd.push("big.txt");
     return cd.into_os_string().into_string().ok();
+  }
+  if let Ok(resp) = blocking_request::get("http://norvig.com/big.txt") {
+    return resp.text().ok()
   }
   None
 }
