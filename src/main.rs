@@ -1,8 +1,6 @@
 use std::env;
 use std::process;
 
-use reqwest::blocking as blocking_request;
-
 use corrector::Corrector;
 
 #[cfg(not(target_env = "msvc"))]
@@ -44,8 +42,8 @@ fn get_big() -> Option<String> {
     cd.push("big.txt");
     return cd.into_os_string().into_string().ok();
   }
-  if let Ok(resp) = blocking_request::get("http://norvig.com/big.txt") {
-    return resp.text().ok();
+  if let Ok(resp) = ureq::get("http://norvig.com/big.txt").call() {
+    return resp.into_string().ok();
   }
   None
 }
