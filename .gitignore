@@ -39,3 +39,5 @@ target/
 .idea/
 tmp/
 __pycache__/
+
+!assets/*
