@@ -20,17 +20,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   };
   corrector.load(filepath)?;
 
-  print!("Type one word: ");
+  let mut rl = rustyline::Editor::<()>::new()?;
   loop {
-    let request: String = text_io::read!("{}\n");
-    corrector::util::_timeit(|| {
-      match corrector.correct(&request) {
-        Some(correct) => println!("Did you mean: {correct}?"),
-        None => println!("No correction available"),
-      }
-    });
-    print!("Type one word: ");
+    let Ok(request) = rl.readline(">> ") else { break };
+    match corrector.correct(&request) {
+      Some(correct) => println!("Did you mean: {correct}?"),
+      None => println!("No correction available"),
+    }
   }
+  Ok(())
 }
 
 fn get_big() -> Option<String> {
@@ -47,7 +45,7 @@ fn get_big() -> Option<String> {
     return cd.into_os_string().into_string().ok();
   }
   if let Ok(resp) = blocking_request::get("http://norvig.com/big.txt") {
-    return resp.text().ok()
+    return resp.text().ok();
   }
   None
 }
