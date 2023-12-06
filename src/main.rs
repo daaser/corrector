@@ -20,7 +20,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   let mut rl = rustyline::Editor::<()>::new()?;
   loop {
-    let Ok(request) = rl.readline(">> ") else { break };
+    let Ok(request) = rl.readline(">> ") else {
+      break;
+    };
     match corrector.correct(&request) {
       Some(correct) => println!("Did you mean: {correct}?"),
       None => println!("No correction available"),
